@@ -1,4 +1,4 @@
 .vscode
-boot
+isofiles
 *.o
 *.elf
