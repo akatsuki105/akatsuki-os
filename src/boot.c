@@ -18,21 +18,19 @@ void fb_move_cursor(unsigned short pos);
 
 void cstart(unsigned long magic, multiboot_info_t *info)
 {
-    char msg[] = "Starting Akatsuki OS!\n";
-    int strlen0, strlen1;
+    char msg[] = "Starting Akatsuki OS!";
+    int strlen;
     int i;
 
-    char *memory_size;
-    sprintf(memory_size, info->mem_upper);
+    char *memory_size = "Memory fuck!";
 
-    strlen0 = sizeof(msg);
-    for (i = 0; i < strlen0; i++) {
+    strlen = sizeof(msg);
+    for (i = 0; i < strlen; i++) {
         display_char(msg[i], DEF_COLOR_WHITE, DEF_COLOR_BLACK, i, 0);
     }
 
-    strlen1 = sizeof(*memory_size);
-    for (i = 0; i < strlen1; i++) {
-        display_char(memory_size[i], DEF_COLOR_WHITE, DEF_COLOR_BLACK, i, 1);
+    for (i = 0; *memory_size != 0; i++) {
+        display_char(*memory_size++, DEF_COLOR_WHITE, DEF_COLOR_BLACK, i+8, 1);
     }
 
     for (;;) {
