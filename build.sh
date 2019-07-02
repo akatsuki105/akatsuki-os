@@ -1,0 +1,1 @@
+grub-mkrescue -o os.iso isofiles/
