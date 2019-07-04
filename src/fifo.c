@@ -1,4 +1,4 @@
-#include "fifo.h"
+#include "boot.h"
 
 #define FLAGS_OVERRUN		0x0001
 

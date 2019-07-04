@@ -1,12 +1,13 @@
 .file "io.s"
 .text
 .align  4
-.globl  inb, outb, io_hlt, io_stihlt, io_cli
+.globl  inb, outb, io_hlt, io_stihlt, io_cli, io_sti
 .type   inb, @function
 .type   outb, @function
 .type   io_hlt, @function
 .type   io_stihlt, @function
 .type   io_cli, @function
+.type   io_sti, @function
 
 inb:
     movw 4(%esp), %dx
@@ -30,4 +31,8 @@ io_stihlt:
 
 io_cli:
     cli
+    ret
+
+io_sti:
+    sti
     ret

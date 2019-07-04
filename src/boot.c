@@ -1,5 +1,5 @@
 #include "multiboot.h"
-#include "io.h"
+#include "boot.h"
 
 #define VRAM_TEXTMODE 0x000B8000
 #define DEF_COLOR_BLACK 0x00
@@ -30,7 +30,7 @@ char keytable[0x80] = {
 
 void cstart(unsigned long magic, multiboot_info_t *info)
 {
-    int i;
+    int i, x, y;
     unsigned char scan_code, ascii_code;
     char *hello_msg = "Starting Akatsuki OS!";
     char *memory_size = "Memory fuck!";
@@ -43,11 +43,21 @@ void cstart(unsigned long magic, multiboot_info_t *info)
         display_char(*memory_size++, DEF_COLOR_WHITE, DEF_COLOR_BLACK, i+8, 1);
     }
 
-    i = 0;
+    x = 0;
+    y = 2;
     for (;;) {
+        io_cli();
         scan_code = (read_keyboard());
         ascii_code = keytable[scan_code];
-        display_char(ascii_code, DEF_COLOR_WHITE, DEF_COLOR_BLACK, i, 2);
+        scan_code = 0;
+        display_char(ascii_code, DEF_COLOR_WHITE, DEF_COLOR_BLACK, x, y);
+        if (ascii_code != 0) {
+            x++;
+            if (x == 80) {
+                x = 0;
+                y++;
+            }
+        }
     }
 }
 
