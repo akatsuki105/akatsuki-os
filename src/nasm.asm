@@ -1,10 +1,17 @@
-section .text
+bits 32
+
+section .text align=4
 global inb
 global outb
 global io_hlt
 global io_stihlt
 global io_cli
 global io_sti
+global load_gdtr
+global load_idtr
+global asm_inthandler21
+
+extern inthandler21
 
 inb:
     mov dx, [esp + 4]
@@ -33,3 +40,31 @@ io_cli:
 io_sti:
     sti
     ret
+
+load_gdtr:		; void load_gdtr(int limit, int addr);
+    mov		ax, [esp+4]		; limit
+    mov		[esp+6], ax
+    lgdt	[esp+6]
+    ret
+
+load_idtr:		; void load_idtr(int limit, int addr);
+    mov		ax, [esp+4]		; limit
+    mov		[esp+6], ax
+    lidt	[esp+6]
+    ret
+
+asm_inthandler21:
+    push	es
+    push	ds
+    pushad
+    mov		eax,esp
+    push	eax
+    mov		ax,ss
+    mov		ds,ax
+    mov		es,ax
+    call	inthandler21
+    pop		eax
+    popad
+    pop		ds
+    pop		es
+    iretd
