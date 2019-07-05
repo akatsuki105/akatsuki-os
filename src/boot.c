@@ -31,16 +31,24 @@ char keytable[0x80] = {
 void cstart(unsigned long magic, multiboot_info_t *info)
 {
     int i, x, y;
+    char *s;
     unsigned char scan_code, ascii_code;
+    // hello msg
     char *hello_msg = "Starting Akatsuki OS!";
-    char *memory_size = "Memory fuck!";
+    // memory msg
+    char *memory_msg = "Memory size: ";
+    int memory_size = (int)info->mem_upper;
 
     for (i = 0; *hello_msg != 0; i++) {
         display_char(*hello_msg++, DEF_COLOR_WHITE, DEF_COLOR_BLACK, i, 0);
     }
 
-    for (i = 0; *memory_size != 0; i++) {
-        display_char(*memory_size++, DEF_COLOR_WHITE, DEF_COLOR_BLACK, i+8, 1);
+    for (i = 0; *memory_msg != 0; i++) {
+        display_char(*memory_msg++, DEF_COLOR_WHITE, DEF_COLOR_BLACK, i, 1);
+    }
+    sprintf(s, "%d", memory_size);
+    for (; *s != 0; i++) {
+        display_char(*s++, DEF_COLOR_WHITE, DEF_COLOR_BLACK, i, 1);
     }
 
     x = 0;

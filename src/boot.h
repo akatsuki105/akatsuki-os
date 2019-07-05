@@ -29,3 +29,8 @@ void fifo32_init(struct FIFO32 *fifo, int size, int *buf);
 int fifo32_put(struct FIFO32 *fifo, int data);
 int fifo32_get(struct FIFO32 *fifo);
 int fifo32_status(struct FIFO32 *fifo);
+
+/* stdlib.c */
+void kmemset(void *start, unsigned char c, int size);
+void sprintf(char *str, char *fmt, ...);
+void load_gdt();
