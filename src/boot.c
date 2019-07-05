@@ -54,7 +54,6 @@ void cstart(unsigned long magic, multiboot_info_t *info)
     x = 0;
     y = 2;
     for (;;) {
-        io_cli();
         scan_code = (read_keyboard());
         ascii_code = keytable[scan_code];
         scan_code = 0;

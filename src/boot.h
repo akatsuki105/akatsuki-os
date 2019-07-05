@@ -12,13 +12,14 @@
 #define PIC1_ICW3		0x00a1
 #define PIC1_ICW4		0x00a1
 
-/* io.s */
+/* nasm.s */
 unsigned char inb(unsigned short port);
 void outb(unsigned short port, unsigned char data);
 void io_hlt();
 void io_stihlt();
 void io_cli();
 void io_sti();
+void load_gdt();
 
 /* fifo.c */
 struct FIFO32 {
