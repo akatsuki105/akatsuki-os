@@ -1,7 +1,6 @@
 // io
-#define DEF_COLOR_BLACK 0x00
-#define DEF_COLOR_WHITE 0x0F
-void display_char(char c, unsigned char foreColor, unsigned char backColor, int x, int y);
+void write_string(char *target_string, int pos_x, int pos_y);
+void display_char(char c, int x, int y);
 void display_cursor(unsigned short pos);
 
 /* nasm.asm */
@@ -13,7 +12,6 @@ void io_cli();
 void io_sti();
 void load_gdtr(int limit, int addr);
 void load_idtr(int limit, int addr);
-void asm_inthandler21(void);
 
 /* fifo.c */
 struct FIFO32 {
@@ -27,4 +25,5 @@ int fifo32_status(struct FIFO32 *fifo);
 
 /* stdlib.c */
 void kmemset(void *start, unsigned char c, int size);
+int strlen(const char *s);
 void sprintf(char *str, char *fmt, ...);

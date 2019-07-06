@@ -9,6 +9,13 @@ void kmemset(void *start, unsigned char c, int size)
         *ptr++ = ch;
 }
 
+int strlen(const char *s)
+{
+    int i = 0;
+    for (; s[i] != 0; i++);
+    return i;
+}
+
 int dec2asc(char *str, int dec)
 {
     int len = 0, len_buf; //桁数

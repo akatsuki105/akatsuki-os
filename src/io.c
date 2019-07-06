@@ -9,17 +9,25 @@
 #define FB_HIGH_BYTE_COMMAND 14
 #define FB_LOW_BYTE_COMMAND 15
 
-void display_char(char c, unsigned char foreColor, unsigned char backColor, int x, int y)
+void write_string(char *target_string, int pos_x, int pos_y)
 {
-    unsigned short *vram_TextMode;
-    unsigned short color;
+    int i = 0;
+    for (i = 0; target_string[i] != 0; i++) {
+        display_char(target_string[i], pos_x, pos_y);
+        pos_x++;
+        if (pos_x > 80) {
+            pos_x = 0;
+            pos_y++;
+        }
+    }
+}
 
-    vram_TextMode = (unsigned short *)VRAM_TEXTMODE;
-
-    color = (backColor << 4) | (foreColor & 0x0F);
+void display_char(char c, int x, int y)
+{
+    unsigned short *vram_TextMode = (unsigned short *)VRAM_TEXTMODE;;
+    unsigned short color = (0x00 << 4) | (0x0F & 0x0F);
 
     vram_TextMode += x + y * MAX_X;
-
     *vram_TextMode = (color << 8) | c;
 }
 

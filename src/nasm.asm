@@ -9,9 +9,6 @@ global io_cli
 global io_sti
 global load_gdtr
 global load_idtr
-global asm_inthandler21
-
-extern inthandler21
 
 inb:
     mov dx, [esp + 4]
@@ -52,19 +49,3 @@ load_idtr:		; void load_idtr(int limit, int addr);
     mov		[esp+6], ax
     lidt	[esp+6]
     ret
-
-asm_inthandler21:
-    push	es
-    push	ds
-    pushad
-    mov		eax,esp
-    push	eax
-    mov		ax,ss
-    mov		ds,ax
-    mov		es,ax
-    call	inthandler21
-    pop		eax
-    popad
-    pop		ds
-    pop		es
-    iretd
