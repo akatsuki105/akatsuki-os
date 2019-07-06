@@ -4,6 +4,9 @@
 #define MAX_Y 25
 #define MAX_X 80
 #define MAX_XY (80 * 25)
+#define COLOR_BLACK 0x00
+#define COLOR_LIGHTGREEN 0x0a
+#define COLOR_WHITE 0x0f
 #define FB_COMMAND_PORT 0x3D4
 #define FB_DATA_PORT 0x3D5
 #define FB_HIGH_BYTE_COMMAND 14
@@ -25,7 +28,7 @@ void write_string(char *target_string, int pos_x, int pos_y)
 void display_char(char c, int x, int y)
 {
     unsigned short *vram_TextMode = (unsigned short *)VRAM_TEXTMODE;;
-    unsigned short color = (0x00 << 4) | (0x0F & 0x0F);
+    unsigned short color = (COLOR_BLACK << 4) | (COLOR_LIGHTGREEN & 0x0F);
 
     vram_TextMode += x + y * MAX_X;
     *vram_TextMode = (color << 8) | c;

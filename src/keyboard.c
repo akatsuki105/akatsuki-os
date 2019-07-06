@@ -27,7 +27,7 @@ void keyboard_input_int(void) {
                     cursor_x++;
                     old = scan_code;
                 }
-                else if (j > 300000) {
+                else if (j > 100000) {
                     write_string(psend, cursor_x, 4);
                     cursor_x++;
                 }
@@ -40,7 +40,7 @@ void keyboard_input_int(void) {
             } else if (old == scan_code) {
                 ++j;
             }
-            if (i > 300000) i = 0;
+            if (i > 100000) i = 0;
             ++i;
         }
     }
