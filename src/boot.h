@@ -34,4 +34,11 @@ struct SEGMENT_DESCRIPTOR {
 	char base_mid, access_right;
 	char limit_high, base_high;
 };
-void init_gdtidt(void);
+struct GATE_DESCRIPTOR {
+	short offset_low, selector;
+	char dw_count, access_right;
+	short offset_high;
+};
+void init_gdt(void);
+void init_pic(void);
+void init_idt(void);

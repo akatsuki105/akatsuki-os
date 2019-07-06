@@ -4,8 +4,11 @@
 
 void cstart(unsigned long magic, multiboot_info_t *info)
 {   
-    init_gdtidt();
-    write_string("Hello Akatsuki OS!", 0, 0);
+    init_gdt();
+    init_pic();
+    init_idt();
+
+    write_string("Hello Akatsuki OS!", 0, 3);
     keyboard_input_int();
 
     for (;;) {
