@@ -27,3 +27,11 @@ int fifo32_status(struct FIFO32 *fifo);
 void kmemset(void *start, unsigned char c, int size);
 int strlen(const char *s);
 void sprintf(char *str, char *fmt, ...);
+
+/* gdtidt.c */
+struct SEGMENT_DESCRIPTOR {
+	short limit_low, base_low;
+	char base_mid, access_right;
+	char limit_high, base_high;
+};
+void init_gdtidt(void);

@@ -4,6 +4,7 @@
 
 void cstart(unsigned long magic, multiboot_info_t *info)
 {   
+    init_gdtidt();
     write_string("Hello Akatsuki OS!", 0, 0);
     keyboard_input_int();
 
