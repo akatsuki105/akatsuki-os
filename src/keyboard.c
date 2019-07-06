@@ -2,7 +2,7 @@
 #include "keyboard.h"
 
 void keyboard_input_int(void) {
-    int old, scan_code;
+    int old, scan_code, cursor_x = 0;
     char keytable[0x80] = {
         0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '^', 0x08, 0,
         'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '@', '[', 0x0a, 0, 'A', 'S',
@@ -23,23 +23,24 @@ void keyboard_input_int(void) {
             psend[1] = 0;
             if (i == 1) {
                 if (j == 0) {
-                    write_string(psend, 0, 4);
+                    write_string(psend, cursor_x, 4);
+                    cursor_x++;
                     old = scan_code;
                 }
-                else if (j > 800000) {
-                    write_string(psend, 0, 4);
+                else if (j > 300000) {
+                    write_string(psend, cursor_x, 4);
+                    cursor_x++;
                 }
             }
 
+            // 新しいキーコード
             if (old != scan_code) {
                 i = 0;
                 j = 0;
-            }
-            else if (old == scan_code) {
+            } else if (old == scan_code) {
                 ++j;
             }
-
-            if (i > 700000) i = 0;
+            if (i > 300000) i = 0;
             ++i;
         }
     }
