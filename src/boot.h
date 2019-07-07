@@ -12,6 +12,7 @@ void io_cli();
 void io_sti();
 void load_gdtr(int limit, int addr);
 void load_idtr(int limit, int addr);
+void asm_keyboard_interrupt(void);
 
 /* fifo.c */
 struct FIFO32 {
@@ -42,3 +43,19 @@ struct GATE_DESCRIPTOR {
 void init_gdt(void);
 void init_pic(void);
 void init_idt(void);
+
+/* keyboard.c */
+void init_keyboard(void);
+char ps2_kerboard_init(void);
+void keyboard_input_int(char scan_code);
+char enable_keyboard(void);
+char getscode(void);
+char getscodeset(void);
+char getchar(void);
+void change_codeset(char set);
+void change_trate_delay(char set);
+
+/* interrupt.c */
+void interrupt_done(void);
+void keyboard_interrupt(void);
+#define irq1 0x61
