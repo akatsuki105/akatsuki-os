@@ -39,7 +39,8 @@ void set_gatedesc(struct GATE_DESCRIPTOR *gd, int offset, int selector, int ar)
 
 void init_gdt(void)
 {
-    write_string("setup GDT...", 0, 0);
+    char msg[] = "setup GDT...";
+    write_string(msg, 0, 0);
     struct SEGMENT_DESCRIPTOR *gdt = (struct SEGMENT_DESCRIPTOR *)ADR_GDT;
     int i;
 
@@ -51,12 +52,14 @@ void init_gdt(void)
     set_segmdesc(gdt + 2, LIMIT_BOTPAK, ADR_BOTPAK, AR_CODE32_ER);
     load_gdtr(LIMIT_GDT, ADR_GDT);
 
+    write_string("OK!", strlen(msg) + 1, 0);
     return;
 }
 
 void init_idt(void)
 {
-    write_string("setup IDT...", 0, 2);
+    char msg[] = "setup IDT...";
+    write_string(msg, 0, 2);
     struct GATE_DESCRIPTOR *idt = (struct GATE_DESCRIPTOR *)ADR_IDT;
     int i;
 
@@ -67,30 +70,33 @@ void init_idt(void)
     set_gatedesc(idt + 0x21, (int) asm_keyboard_interrupt, 1 * 8, 0x8e);
 
     load_idtr(LIMIT_IDT, ADR_IDT);
+
+    write_string("OK!", strlen(msg) + 1, 2);
     return;
 }
 
 void init_pic(void)
 {
-    write_string("setup PIC...", 0, 1);
+    char msg[] = "setup PIC...";
+    write_string(msg, 0, 1);
 
-    outb(0x21, 0xff);
-    outb(0xa1, 0xff);
+    outb(MASTER_PIC_MASK_DATA, CLEAR_MASK);
+    outb(SLAVE_PIC_MASK_DATA, CLEAR_MASK);
 
-    outb(0x20, 0x11);
-    outb(0xa0, 0x11);
+    outb(MASTER_PIC_CMD_STAT, WRITE_ICW1);
+    outb(SLAVE_PIC_CMD_STAT, WRITE_ICW1);
 
-    outb(0x20, 0x20);
-    outb(0xa0, 0x28);
+    outb(MASTER_PIC_MASK_DATA, WRITE_ICW2_M);
+    outb(SLAVE_PIC_MASK_DATA, WRITE_ICW2_S);
 
-    outb(0x21, 0x04);
-    outb(0xa1, 0x02);
+    outb(MASTER_PIC_MASK_DATA, WRITE_ICW3_M);
+    outb(SLAVE_PIC_MASK_DATA, WRITE_ICW3_S);
 
-    outb(0x21, 0x01);
-    outb(0xa1, 0x01);
+    outb(MASTER_PIC_MASK_DATA, WRITE_ICW4_X86MODE);
+    outb(SLAVE_PIC_MASK_DATA, WRITE_ICW4_X86MODE);
 
-    outb(0x21, 0xf9);
-    outb(0xa1, 0xef);
+    outb(MASTER_PIC_MASK_DATA, 0xf9);
+    outb(SLAVE_PIC_MASK_DATA, 0xef);
 
-    return;
+    write_string("OK!", strlen(msg) + 1, 1);
 }
