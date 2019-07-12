@@ -67,5 +67,4 @@ asm_keyboard_interrupt:
     popad
     pop		ds
     pop		es
-    sti
     iretd

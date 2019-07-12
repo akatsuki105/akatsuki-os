@@ -67,7 +67,7 @@ void init_idt(void)
         set_gatedesc(idt + i, 0, 0, 0);
     }
 
-    set_gatedesc(idt + 0x21, (int) asm_keyboard_interrupt, 1 * 8, 0x8e);
+    set_gatedesc(idt + 0x21, (int) asm_keyboard_interrupt, 2 * 8, 0x8e);
 
     load_idtr(LIMIT_IDT, ADR_IDT);
 
