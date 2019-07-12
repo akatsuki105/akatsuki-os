@@ -10,44 +10,29 @@ int buf[30];
 #define SET_TYPEMATIC_RATE 0xF3
 #define ENABLE_KEYBOARD 0xF4   
 #define SET_SCANCODESET 0xF0
-#define SCAN_CODE_SET1 0x01
-#define SCAN_CODE_SET2 0x02
-#define SCAN_CODE_SET3 0x03
 #define TYPEMATICDELAY_SET1 0x01
-#define TYPEMATICDELAY_SET2 0x02
 #define PORTMAP_KEYBOARD1 0x60
 #define PORTMAP_KEYBOARD2 0x64
+#define KEYSTA_SEND_NOTREADY	0x02
 
-void init_keyboard (void)
+void wait_KBC_sendready(void)
 {
-    change_trate_delay(TYPEMATICDELAY_SET2);
-    if (enable_keyboard() == 0xFA) {
-        write_string("Keyboard enable OK", 0, 3);
-    } else {
-        write_string("fuck", 0, 3);
-    }
-    if (ps2_kerboard_init() == 0) {
-        write_string("PS/2 Keyboard init OK", 0, 3);
-    }
-    write_string("ps2_kerboard_init end", 0, 3);
+	/* �L�[�{�[�h�R���g���[�����f�[�^���M�\�ɂȂ�̂�҂� */
+	for (;;) {
+		if ((inb(PORTMAP_KEYBOARD2) & KEYSTA_SEND_NOTREADY) == 0) {
+			break;
+		}
+	}
+	return;
 }
 
-char ps2_kerboard_init(void)
+void init_keyboard(void)
 {
-    change_codeset(SCAN_CODE_SET2);
-    char scodeset = getscodeset();
-    if (scodeset == 0x43) {
-        write_string("Scan code set 1", 0, 3);
-    } else if (scodeset == 0x41) {
-        write_string("Scan code set 2", 0, 3);
-    } else if (scodeset == 0x3f) {
-        write_string("Scan code set 3", 0, 3);
-    } else {
-        write_string("Unknown scan code set", 0, 3);
-        return 1;
-    }
-    outb(0x60, 0xFA);
-    return 0;
+	wait_KBC_sendready();
+	outb(PORTMAP_KEYBOARD2, 0x60);
+	wait_KBC_sendready();
+	outb(PORTMAP_KEYBOARD1, 0x47);
+	return;
 }
 
 void keyboard_input_int(char scan_code)
