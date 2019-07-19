@@ -1,6 +1,4 @@
-.vscode
-isofiles
-*.o
-*.elf
-*.bin
 *.iso
+isodir
+sysroot
+.vscode

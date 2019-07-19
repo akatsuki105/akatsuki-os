@@ -1,1 +1,7 @@
-mkdir -p isodir/boot/grub;cp myos.bin isodir/boot/myos.bin;cp grub.cfg isodir/boot/grub/grub.cfg;grub-mkrescue -o myos.iso isodir
+#!/bin/sh
+set -e
+. ./headers.sh
+
+for PROJECT in $PROJECTS; do
+  (cd $PROJECT && DESTDIR="$SYSROOT" $MAKE install)
+done
