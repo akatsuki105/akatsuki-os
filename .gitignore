@@ -2,4 +2,5 @@
 isofiles
 *.o
 *.elf
-os.iso
+*.bin
+*.iso
