@@ -1,7 +1,7 @@
 .file "asm.s"
 .text
 .align  4
-.globl  inb, outb, io_hlt, io_stihlt, io_cli, io_sti, load_gdtr
+.globl  inb, outb, io_hlt, io_stihlt, io_cli, io_sti, load_gdtr, load_idtr
 .type   inb, @function
 .type   outb, @function
 .type   io_hlt, @function
@@ -48,4 +48,13 @@ load_gdtr:
         movw    8(%esp),        %ax
         movw    %ax,            gdtr
         lgdt    gdtr
+        ret
+
+idtr:
+load_idtr:
+        movl    4(%esp),        %eax
+        movl    %eax,           base
+        movw    8(%esp),        %ax
+        movw    %ax,            idtr
+        lgdt    idtr
         ret

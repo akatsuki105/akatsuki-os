@@ -15,6 +15,18 @@ void init_gdt(void)
 	return;
 }
 
+void init_idt(void)
+{
+	struct GATE_DESCRIPTOR *idt = (struct GATE_DESCRIPTOR *) ADR_IDT;
+	int i;
+
+	for (i = 0; i <= LIMIT_IDT / 8; i++) {
+		set_gatedesc(idt + i, 0, 0, 0);
+	}
+	load_idtr(LIMIT_IDT, ADR_IDT);
+	return;
+}
+
 void set_segmdesc(struct SEGMENT_DESCRIPTOR *sd, unsigned int limit, int base, int ar)
 {
 	if (limit > 0xfffff) {

@@ -5,3 +5,4 @@ void io_stihlt();
 void io_cli();
 void io_sti();
 void load_gdtr();
+void load_idtr();
