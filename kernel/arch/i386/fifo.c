@@ -3,7 +3,7 @@
 #define FLAGS_OVERRUN		0x0001
 
 struct FIFO32 fifo;
-int fifobuf[32];
+int fifobuf[128];
 
 void fifo32_init(struct FIFO32 *fifo, int size, int *buf)
 {

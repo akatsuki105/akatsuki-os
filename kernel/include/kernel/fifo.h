@@ -8,4 +8,4 @@ int fifo32_get(struct FIFO32 *fifo);
 int fifo32_status(struct FIFO32 *fifo);
 
 extern struct FIFO32 fifo;
-extern int fifobuf[32];
+extern int fifobuf[128];

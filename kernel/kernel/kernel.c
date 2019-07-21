@@ -5,8 +5,6 @@
 #include <kernel/keyboard.h>
 #include <kernel/fifo.h>
 
-extern key_buf kb;
-
 void kernel_main(void)
 {
 	terminal_initialize();
@@ -14,7 +12,7 @@ void kernel_main(void)
 	init_idt();
 	init_pic();
 	init_key();
-	fifo32_init(&fifo, 32, fifobuf);
+	fifo32_init(&fifo, 128, fifobuf);
 	printf("Hello, Akatsuki World!\n");
 
 	char c[2];
