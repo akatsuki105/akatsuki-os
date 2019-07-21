@@ -39,28 +39,25 @@ io_sti:
     sti
     ret
 
-gdtr:
-glimit:  .word 0 # For limit storage
-gbase:   .long 0 # For base storage
-
 load_gdtr:
-        movl    4(%esp),        %eax
-        movl    %eax,           gbase
-        movw    8(%esp),        %ax
-        movw    %ax,            gdtr
-        lgdt    gdtr
-        ret
+	movl	4(%esp), %eax
+	lgdt	(%eax)
+	
+	mov 	$0x10, %ax
+	mov 	%ax,   %ds
+	mov 	%ax,   %es
+	mov 	%ax,   %fs
+	mov 	%ax,   %gs
+	mov 	%ax,   %ss
+	
+	jmp     $0x08, $gdt_flush
+gdt_flush:	
+	ret
 
-idtr:
-ilimit:  .word 0 # For limit storage
-ibase:   .long 0
 load_idtr:
-        movl    4(%esp),        %eax
-        movl    %eax,           ibase
-        movw    8(%esp),        %ax
-        movw    %ax,            idtr
-        lgdt    idtr
-        ret
+	mov     4(%esp), %eax
+	lidt    (%eax)
+	ret
 
 as_keyboard_interrupt:
         push    %es

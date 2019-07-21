@@ -1,5 +1,5 @@
 #include "kernel/asm.h"
-#include "kernel/dsctbl.h"
+#include "kernel/gdtidt.h"
 #include "kernel/interrupt.h"
 #include "kernel/keyboard.h"
 
