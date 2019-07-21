@@ -1,8 +1,7 @@
 #include "kernel/keyboard.h"
 #include "kernel/asm.h"
+#include "kernel/fifo.h"
 #include <stdio.h>
-
-key_buf kb;
 
 void init_key(void)
 {
@@ -17,50 +16,44 @@ void init_key(void)
 
 uint8_t ps2_kerboard_init(void)
 {
-  uint8_t scodeset = getscodeset();
-  if (scodeset == 0x43) {
-    printf("Current Scan code set 1\nCorrection to Scan code set2\n");
-    change_codeset(SCAN_CODE_SET2);
-  }
-  else if (scodeset == 0x41) {
-    printf("Scan code set 2\n");
-  } else if (scodeset == 0x3f) {
-    printf("Current Scan code set 3\nCorrection to Scan code set2\n");
-    change_codeset(SCAN_CODE_SET2);
-  } else {
-    printf("Unknown scan code set\nPS/2 Emulation?\n");
-    return 1;
-  }
-  return 0;
+    uint8_t scodeset = getscodeset();
+    if (scodeset == 0x43) {
+      printf("Current Scan code set 1\nCorrection to Scan code set2\n");
+      change_codeset(SCAN_CODE_SET2);
+    }
+    else if (scodeset == 0x41) {
+      printf("Scan code set 2\n");
+    } else if (scodeset == 0x3f) {
+      printf("Current Scan code set 3\nCorrection to Scan code set2\n");
+      change_codeset(SCAN_CODE_SET2);
+    } else {
+      printf("Unknown scan code set\nPS/2 Emulation?\n");
+      return 1;
+    }
+    return 0;
 }
 
 //下の関数を全面的に変更
 void keyboard_input_int(uint8_t scan_code)
 {
-  uint8_t us_keytable_set2[0x80] = {
-      '0', '0', '1', '2', '3', '4', '5', '6', '7', '8',
-      '9', '0', '-', '=', '\b', '\t', 'q', 'w', 'e', 'r',
-      't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', '0',
-      'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
-      '\'', '`', '0', '\\', 'z', 'x', 'c', 'v', 'b', 'n',
-      'm', ',', '.', '/', '0', '0', '0', ' ', '0', '0',
-      '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
-      '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
-      '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
-      '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
-      '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
-      '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
-      '0', '0', '0', '0', '0', '0', '0', '0'};
+    uint8_t us_keytable_set2[0x80] = {
+        '0', '0', '1', '2', '3', '4', '5', '6', '7', '8',
+        '9', '0', '-', '=', '\b', '\t', 'q', 'w', 'e', 'r',
+        't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n', '0',
+        'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
+        '\'', '`', '0', '\\', 'z', 'x', 'c', 'v', 'b', 'n',
+        'm', ',', '.', '/', '0', '0', '0', ' ', '0', '0',
+        '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+        '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+        '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+        '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+        '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+        '0', '0', '0', '0', '0', '0', '0', '0', '0', '0',
+        '0', '0', '0', '0', '0', '0', '0', '0'};
 
-  if (scan_code <= 0x80) {
-    if (kb.len < 128) {
-      kb.pdata[kb.write++] = us_keytable_set2[scan_code];
-      ++kb.len;
-      if (kb.write == 128) {
-        kb.write = 0;
-      }
+    if (scan_code <= 0x80) {
+      fifo32_put(&fifo, us_keytable_set2[scan_code]);
     }
-  }
 }
 
 uint8_t enable_keyboard(void)
