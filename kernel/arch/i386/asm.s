@@ -39,21 +39,23 @@ io_sti:
     ret
 
 gdtr:
-limit:  .word 0 # For limit storage
-base:   .long 0 # For base storage
+glimit:  .word 0 # For limit storage
+gbase:   .long 0 # For base storage
 
 load_gdtr:
         movl    4(%esp),        %eax
-        movl    %eax,           base
+        movl    %eax,           gbase
         movw    8(%esp),        %ax
         movw    %ax,            gdtr
         lgdt    gdtr
         ret
 
 idtr:
+ilimit:  .word 0 # For limit storage
+ibase:   .long 0
 load_idtr:
         movl    4(%esp),        %eax
-        movl    %eax,           base
+        movl    %eax,           ibase
         movw    8(%esp),        %ax
         movw    %ax,            idtr
         lgdt    idtr
