@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include <kernel/tty.h>
+#include <kernel/asm.h>
 
 #include "vga.h"
 
@@ -53,6 +54,7 @@ void terminal_putchar(char c) {
 		if (++terminal_row == VGA_HEIGHT)
 			terminal_row = 0;
 	}
+	fb_move_cursor(terminal_column, terminal_row);
 }
 
 void terminal_write(const char* data, size_t size) {
@@ -62,4 +64,13 @@ void terminal_write(const char* data, size_t size) {
 
 void terminal_writestring(const char* data) {
 	terminal_write(data, strlen(data));
+}
+
+void fb_move_cursor(size_t x, size_t y)
+{
+	size_t index = y * VGA_WIDTH + x;
+	outb(0x3d4, 14);
+	outb(0x3d5, ((index >> 8) & 0xff));
+	outb(0x3d4, 15);
+	outb(0x3d5, index & 0xff);
 }

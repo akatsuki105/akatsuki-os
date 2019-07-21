@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #include <kernel/tty.h>
 #include <kernel/gdtidt.h>
 #include <kernel/asm.h>
@@ -26,7 +25,7 @@ void kernel_main(void)
 			io_sti();
 		} else {
 			c[0] = fifo32_get(&fifo);
-			asm volatile("sti");
+			io_sti();
 			printf(c);
 		}
 	}
