@@ -1,7 +1,7 @@
 .file "asm.s"
 .text
 .align  4
-.globl  inb, outb, io_hlt, io_stihlt, io_cli, io_sti, load_gdtr, load_idtr
+.globl  inb, outb, io_hlt, io_stihlt, io_cli, io_sti, load_gdtr, load_idtr, as_keyboard_interrupt
 .type   inb, @function
 .type   outb, @function
 .type   io_hlt, @function
@@ -9,6 +9,7 @@
 .type   io_cli, @function
 .type   io_sti, @function
 .type   load_gdtr, @function
+.extern keyboard_interrupt
 
 inb:
     movw 4(%esp), %dx
@@ -60,3 +61,20 @@ load_idtr:
         movw    %ax,            idtr
         lgdt    idtr
         ret
+
+as_keyboard_interrupt:
+        push    %es
+        push    %ds
+        pushal
+        mov     %esp, %eax
+        push    %eax
+        mov     %ss, %ax
+        mov     %ax, %ds
+        mov     %ax, %es
+        call    keyboard_interrupt
+        pop     %eax
+        popal
+        pop     %ds
+        pop     %es
+        sti
+        iretl
