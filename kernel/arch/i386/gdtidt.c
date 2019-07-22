@@ -1,11 +1,8 @@
-#include <stdio.h>
-
 #include <kernel/asm.h>
 #include <kernel/gdtidt.h>
 
 void init_gdt()
 {
-	printf("setup gdt...");
 	gdtr gdt;
 	// clear gdt
 	for (size_t i = 0; i < GDT_LEN; i++) {
@@ -21,12 +18,10 @@ void init_gdt()
 	gdt.gdt_size = GDT_LEN * sizeof(gdt_desc) - 1;
 	gdt.base = (uint32_t)gdt_entries;
 	load_gdtr((uint32_t)(&gdt));
-	printf("OK!\n");
 }
 
 void init_idt(void)
 {
-	printf("setup idt...");
 	idtr idt;
 	for (size_t i = 0; i < IDT_LEN; i++) {
 		set_gate_desc(i, 0, 0, 0);
@@ -36,7 +31,6 @@ void init_idt(void)
 	idt.idt_size = IDT_LEN * sizeof(gate_desc) -1;
 	idt.base = (uint32_t)idt_entries;
 	load_idtr((uint32_t)&(idt));
-	printf("OK!\n");
 }
 
 void set_segment_desc(uint32_t index, uint32_t base, uint32_t limit, uint8_t s_access, uint8_t gran)
@@ -62,8 +56,6 @@ void set_gate_desc(uint32_t index, uint32_t offset, uint32_t selector, uint8_t a
 
 void init_pic(void)
 {
-  printf("setup PIC...");
- 
   outb(MASTER_PIC_MASK_DATA, CLEAR_MASK);
   outb(SLAVE_PIC_MASK_DATA, CLEAR_MASK);
 
@@ -81,6 +73,4 @@ void init_pic(void)
 
   outb(MASTER_PIC_MASK_DATA, 0xf9);
   outb(SLAVE_PIC_MASK_DATA, 0xef);
- 
-  printf("OK!\n");
 }

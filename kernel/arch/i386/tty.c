@@ -42,12 +42,14 @@ void terminal_putentryat(unsigned char c, uint8_t color, size_t x, size_t y) {
 void terminal_putchar(char c) {
 	unsigned char uc = c;
 	if (uc == '\n') {
-		terminal_column = 0;
+		uc = 0;
+		terminal_column = -1;
 		if (++terminal_row == VGA_HEIGHT) {
 			terminal_row = 0;
 		}
-		fb_move_cursor(terminal_column, terminal_row);
-		return;
+	} else if (uc == '\t') {
+		uc = 0;
+		terminal_column += 3;
 	} else if (uc == '\b') {
 		if (terminal_column > 0) {
 			terminal_column--;

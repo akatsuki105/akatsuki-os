@@ -34,11 +34,11 @@ const keymap key_code = {
 void init_key(void)
 {
   change_trate_delay(TYPEMATICDELAY_SET2); //追加
-  if (enable_keyboard() == 0xFA) {
-    printf("Keyboard enable OK\n");
+  if (enable_keyboard() != 0xFA) {
+    printf("Keyboard enable NG\n");
   }
-  if (ps2_kerboard_init() == 0) {
-    printf("PS/2 Keyboard init OK\n");
+  if (ps2_kerboard_init() != 0) {
+    printf("PS/2 Keyboard init NG\n");
   }
 }
 
@@ -50,7 +50,7 @@ uint8_t ps2_kerboard_init(void)
       change_codeset(SCAN_CODE_SET2);
     }
     else if (scodeset == 0x41) {
-      printf("Scan code set 2\n");
+      // 何もしない
     } else if (scodeset == 0x3f) {
       printf("Current Scan code set 3\nCorrection to Scan code set2\n");
       change_codeset(SCAN_CODE_SET2);
