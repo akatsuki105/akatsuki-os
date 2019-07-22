@@ -5,6 +5,8 @@
 #include <kernel/asm.h>
 #include <kernel/keyboard.h>
 #include <kernel/fifo.h>
+#include <kernel/multiboot.h>
+#include <kernel/getmmap.h>
 
 extern size_t pmstr_len;    //追加
 size_t pmstr_len;
@@ -64,7 +66,7 @@ void shell(void){
 	}
 }
 
-void kernel_main(void)
+void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 {
 	terminal_initialize();
 	init_gdt();
@@ -73,6 +75,8 @@ void kernel_main(void)
 	init_key();
 	fifo32_init(&fifo, 128, fifobuf);
 	printf("Hello, Akatsuki World!\n");
+
+	getmmap(mbt);
 
 	shell();
 }
