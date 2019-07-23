@@ -81,9 +81,10 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 	init_memman(memman);
 	memman_free(memman, 0x100000, 0x3ef0000);
 
-	printf("Hello, Akatsuki World!\n");
+	printf("Hello, Akatsuki OS!\n");
 
-	getmmap(mbt);
+	printf("free memory: %d\n", memman_total(memman));
+	// getmmap(mbt);
 
 	shell();
 }
