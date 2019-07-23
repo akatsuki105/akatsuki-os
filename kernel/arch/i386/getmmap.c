@@ -9,6 +9,8 @@ void getmmap(multiboot_info_t *mbt)
 
     printf("\n\n================= memory map ======================\n");
 
+    printf("Total Memory: %dKB\n", mbt->mem_upper);
+
     for (mmap; mmap < (mbt->mmap_addr + mbt->mmap_length); mmap++)
     {
         if (mmap->base_addr_high == 0x0) {
