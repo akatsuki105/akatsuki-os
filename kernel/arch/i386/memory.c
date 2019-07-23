@@ -1,6 +1,6 @@
 #include <kernel/memory.h>
 
-void init_memman(memman *man)
+void init_memman(memory_manager *man)
 {
     man->frees = 0;
     man->maxfrees = 0;
@@ -8,7 +8,7 @@ void init_memman(memman *man)
     man->losts = 0;
 }
 
-uint32_t memman_total(memman *man)
+uint32_t memman_total(memory_manager *man)
 {
     uint32_t i, t = 0;
     for (i = 0; i < man->frees; i++) {
@@ -17,7 +17,7 @@ uint32_t memman_total(memman *man)
     return t;
 }
 
-uint32_t memman_alloc(memman *man, size_t size)
+uint32_t memman_alloc(memory_manager *man, size_t size)
 {
     uint32_t i, a;
     for (i = 0; i < man->frees; i++) {
@@ -38,7 +38,7 @@ uint32_t memman_alloc(memman *man, size_t size)
     return 0;
 }
 
-int memman_free(memman *man, uint32_t addr, size_t size)
+int memman_free(memory_manager *man, uint32_t addr, size_t size)
 {
     int i, j;
 	for (i = 0; i < man->frees; i++) {
@@ -88,7 +88,7 @@ int memman_free(memman *man, uint32_t addr, size_t size)
 	return -1;
 }
 
-uint32_t memman_alloc_4k(memman *man, size_t size)
+uint32_t memman_alloc_4k(memory_manager *man, size_t size)
 {
 	uint32_t a;
 	size = (size + 0xfff) & 0xfffff000;
@@ -96,7 +96,7 @@ uint32_t memman_alloc_4k(memman *man, size_t size)
 	return a;
 }
 
-int memman_free_4k(memman *man, uint32_t addr, uint32_t size)
+int memman_free_4k(memory_manager *man, uint32_t addr, uint32_t size)
 {
 	int i;
 	size = (size + 0xfff) & 0xfffff000;

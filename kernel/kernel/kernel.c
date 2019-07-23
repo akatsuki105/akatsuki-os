@@ -8,8 +8,8 @@
 #include <kernel/multiboot.h>
 #include <kernel/getmmap.h>
 #include <kernel/memory.h>
+#include <kernel/timer.h>
 
-extern size_t pmstr_len;
 size_t pmstr_len;
 static size_t i;
 
@@ -45,7 +45,8 @@ int execute_cmd(char *cmdline)
 	return -1;
 }
 
-void shell(void){
+void shell(void)
+{
 	int result = -1;
 	char cmdline[1024];
 	char *prompt_name = "akatsuki";
@@ -69,22 +70,42 @@ void shell(void){
 
 void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 {
-	terminal_initialize();
+	// init hardware
+	init_terminal();
 	init_gdt();
 	init_idt();
 	init_pic();
 	init_key();
+	init_pit();
+
+	// init fifo
 	init_fifo32(&fifo, 128, fifobuf);
 
 	// memory manage (64MB)
-	memman *memman = MEMMAN_ADDR;
+	memory_manager *memman = (memory_manager *)MEMMAN_ADDR;
 	init_memman(memman);
 	memman_free(memman, 0x100000, 0x3ef0000);
 
-	printf("Hello, Akatsuki OS!\n");
+	// init timer
+	struct TIMER *timer;
+	struct FIFO32 timer_fifo;
+	int timerbuf[128];
+	init_fifo32(&timer_fifo, 128, timerbuf);
+	timer = timer_alloc();
+	init_timer(timer, &timer_fifo, 1);
+	timer_settime(timer, 500);
 
-	printf("free memory: %d\n", memman_total(memman));
-	// getmmap(mbt);
+	for (;;) {
+		io_cli();
+		if (fifo32_status(&timer_fifo) == 0) {
+			io_stihlt();
+		} else {
+			printf("yo!\n");
+			break;
+		}
+	}
+
+	printf("Hello, Akatsuki OS!\n");
 
 	shell();
 }
