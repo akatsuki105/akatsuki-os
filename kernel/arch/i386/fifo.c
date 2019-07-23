@@ -5,7 +5,7 @@
 struct FIFO32 fifo;
 int fifobuf[128];
 
-void fifo32_init(struct FIFO32 *fifo, int size, int *buf)
+void init_fifo32(struct FIFO32 *fifo, int size, int *buf)
 {
 	fifo->size = size;
 	fifo->buf = buf;

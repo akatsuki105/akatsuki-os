@@ -7,8 +7,9 @@
 #include <kernel/fifo.h>
 #include <kernel/multiboot.h>
 #include <kernel/getmmap.h>
+#include <kernel/memory.h>
 
-extern size_t pmstr_len;    //追加
+extern size_t pmstr_len;
 size_t pmstr_len;
 static size_t i;
 
@@ -73,7 +74,13 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 	init_idt();
 	init_pic();
 	init_key();
-	fifo32_init(&fifo, 128, fifobuf);
+	init_fifo32(&fifo, 128, fifobuf);
+
+	// memory manage (64MB)
+	memman *memman = MEMMAN_ADDR;
+	init_memman(memman);
+	memman_free(memman, 0x100000, 0x3ef0000);
+
 	printf("Hello, Akatsuki World!\n");
 
 	getmmap(mbt);
