@@ -7,7 +7,7 @@ void getmmap(multiboot_info_t *mbt)
     multiboot_memory_t *mmap = mbt->mmap_addr;
     char *type_str;
 
-    printf("\n\n================get memory map=====================\n");
+    printf("\n\n================= memory map ======================\n");
 
     for (mmap; mmap < (mbt->mmap_addr + mbt->mmap_length); mmap++)
     {
