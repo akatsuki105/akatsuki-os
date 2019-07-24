@@ -11,6 +11,7 @@ void load_gdtr();
 void load_idtr();
 void as_timer_interrupt(void);
 void as_keyboard_interrupt(void);
+void as_software_interrupt(void);
 int load_eflags(void);
 void store_eflags(int eflags);
 

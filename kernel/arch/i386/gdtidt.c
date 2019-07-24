@@ -29,6 +29,7 @@ void init_idt(void)
 
 	set_gate_desc(0x20, (uint32_t)as_timer_interrupt, 1*8, 0x8e);
 	set_gate_desc(0x21, (uint32_t)as_keyboard_interrupt, 1*8, 0x8e);
+	set_gate_desc(0x80, (uint32_t)as_software_interrupt, 1*8, 0x8f);
 	idt.idt_size = IDT_LEN * sizeof(gate_desc) -1;
 	idt.base = (uint32_t)idt_entries;
 	load_idtr((uint32_t)&(idt));

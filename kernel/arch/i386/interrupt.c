@@ -3,6 +3,7 @@
 #include "kernel/interrupt.h"
 #include "kernel/keyboard.h"
 #include "kernel/timer.h"
+#include "kernel/syscall.h"
 
 void interrupt_done(void){
   outb(MASTER_PIC_CMD_STAT, PIC_EOI);
@@ -38,4 +39,15 @@ void timer_interrupt(void)
 	timerctl.t0 = t;
 	timerctl.next = t->timeout;
 	return;
+}
+
+uint32_t software_interrupt(uint32_t syscall_num, uint32_t arg1, uint32_t arg2, uint32_t arg3, uint32_t arg4, uint32_t arg5)
+{
+	switch (syscall_num) {
+	case SYSCALL_WRITE:
+		break;
+	case SYSCALL_READ:
+		break;
+	}
+	return 0;
 }
