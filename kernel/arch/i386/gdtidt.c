@@ -72,6 +72,6 @@ void init_pic(void)
   outb(MASTER_PIC_MASK_DATA, WRITE_ICW4_X86MODE);
   outb(SLAVE_PIC_MASK_DATA, WRITE_ICW4_X86MODE);
 
-  outb(MASTER_PIC_MASK_DATA, 0xf9);
+  outb(MASTER_PIC_MASK_DATA, 0xf8); // PIT & IRQ1 & IRQ2
   outb(SLAVE_PIC_MASK_DATA, 0xef);
 }
