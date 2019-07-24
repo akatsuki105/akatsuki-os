@@ -86,25 +86,6 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 	init_memman(memman);
 	memman_free(memman, 0x100000, 0x3ef0000);
 
-	// init timer
-	struct TIMER *timer;
-	struct FIFO32 timer_fifo;
-	int timerbuf[128];
-	init_fifo32(&timer_fifo, 128, timerbuf);
-	timer = timer_alloc();
-	init_timer(timer, &timer_fifo, 1);
-	timer_settime(timer, 500);
-
-	for (;;) {
-		io_cli();
-		if (fifo32_status(&timer_fifo) == 0) {
-			io_stihlt();
-		} else {
-			printf("yo!\n");
-			break;
-		}
-	}
-
 	printf("Hello, Akatsuki OS!\n");
 
 	shell();
