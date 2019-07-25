@@ -88,7 +88,7 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 	init_pit();
 
 	// init fifo
-	init_fifo32(&kernelfifo, 128, kernelfifo_buf);
+	init_fifo32(&kernelfifo, 128, kernelfifo_buf, 0);
 
 	// memory manage (64MB)
 	memory_manager *memman = (memory_manager *)MEMMAN_ADDR;
