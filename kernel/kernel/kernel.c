@@ -26,7 +26,7 @@ int input_line(char* prompt_name, char* cmdline){
 			cmdline[i] = '\0';
 			return 0;
 		} else if (c == '\b') {
-			cmdline[i] == '\0';
+			cmdline[i] = '\0';
 		if (i > 0) { --i; }
 		} else {
 			cmdline[i++] = c;
@@ -78,6 +78,9 @@ void task_b_main(void)
 
 void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 {
+	// init variable
+	struct TASK *kernel_task;
+
 	// init hardware
 	init_terminal();
 	init_gdt();
@@ -92,35 +95,13 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 	// memory manage (64MB)
 	memory_manager *memman = (memory_manager *)MEMMAN_ADDR;
 	init_memman(memman);
-	memman_free(memman, 0x100000, 0x3ef0000);
+	memman_free(memman, 0x100000, 0xdfef0000);
+	memman_free(memman, 0x100000000, 0x20000000);
 
 	// init multitask
-	struct TSS32 tss_a, tss_b;
-	tss_a.ldtr = 0;
-	tss_a.iomap = 0x40000000;
-	tss_b.ldtr = 0;
-	tss_b.iomap = 0x40000000;
-	set_segment_desc(3, (int)&tss_a, 103, 0x89, 0x00);
-	set_segment_desc(4, (int)&tss_b, 103, 0x89, 0x00);
-	load_tr(3*8);
-	int task_b_esp = memman_alloc_4k(memman, 64 * 1024) + 64 * 1024;
-	tss_b.eip = (int) &task_b_main;
-	tss_b.eflags = 0x00000202; /* IF = 1; */
-	tss_b.eax = 0;
-	tss_b.ecx = 0;
-	tss_b.edx = 0;
-	tss_b.ebx = 0;
-	tss_b.esp = task_b_esp;
-	tss_b.ebp = 0;
-	tss_b.esi = 0;
-	tss_b.edi = 0;
-	tss_b.es = 2 * 8;
-	tss_b.cs = 1 * 8;
-	tss_b.ss = 2 * 8;
-	tss_b.ds = 2 * 8;
-	tss_b.fs = 2 * 8;
-	tss_b.gs = 2 * 8;
-	mt_init();
+	kernel_task = init_multitask(memman);
+	kernelfifo.task = kernel_task;
+	task_run(kernel_task, 1, 2);
 
 	printf("Hello, Akatsuki OS!\n");
 

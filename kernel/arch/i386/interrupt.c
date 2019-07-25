@@ -46,7 +46,7 @@ void timer_interrupt(void)
 	timerctl.t0 = timer;
 	timerctl.next = timer->timeout;
 	if (ts != 0) {
-		mt_taskswitch();
+		task_switch();
 	}
 	return;
 }

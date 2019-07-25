@@ -47,7 +47,4 @@ void task_run(struct TASK *task, int level, int priority);
 void task_switch(void);
 void task_sleep(struct TASK *task);
 
-void mt_init(void);
-void mt_taskswitch(void);
-
 #endif _MTASK_H_

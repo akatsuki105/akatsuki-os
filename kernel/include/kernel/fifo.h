@@ -15,5 +15,7 @@ int fifo32_status(struct FIFO32 *fifo);
 
 extern struct FIFO32 kernelfifo;
 extern int kernelfifo_buf[128];
+extern struct FIFO32 shellfifo;
+extern int shellfifo_buf[128];
 
 #endif _FIFO_H_

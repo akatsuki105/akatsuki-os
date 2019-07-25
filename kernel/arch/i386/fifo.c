@@ -4,6 +4,8 @@
 
 struct FIFO32 kernelfifo;
 int kernelfifo_buf[128];
+struct FIFO32 shellfifo;
+int shellfifo_buf[128];
 
 void init_fifo32(struct FIFO32 *fifo, int size, int *buf, struct TASK *task)
 {
