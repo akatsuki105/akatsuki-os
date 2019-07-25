@@ -23,7 +23,6 @@ int input_line(char* prompt_name, char* cmdline){
 		io_sti();
 
 		if (c == '\n') {
-			farjmp(0, 4*8);
 			cmdline[i] = '\0';
 			return 0;
 		} else if (c == '\b') {
@@ -121,6 +120,7 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 	tss_b.ds = 2 * 8;
 	tss_b.fs = 2 * 8;
 	tss_b.gs = 2 * 8;
+	mt_init();
 
 	printf("Hello, Akatsuki OS!\n");
 

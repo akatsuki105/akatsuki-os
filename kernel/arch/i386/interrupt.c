@@ -4,6 +4,7 @@
 #include "kernel/keyboard.h"
 #include "kernel/timer.h"
 #include "kernel/syscall.h"
+#include "kernel/mtask.h"
 
 void interrupt_done(void){
   outb(MASTER_PIC_CMD_STAT, PIC_EOI);
@@ -45,7 +46,7 @@ void timer_interrupt(void)
 	timerctl.t0 = timer;
 	timerctl.next = timer->timeout;
 	if (ts != 0) {
-		task_switch();
+		mt_taskswitch();
 	}
 	return;
 }

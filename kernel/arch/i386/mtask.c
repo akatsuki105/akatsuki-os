@@ -1,8 +1,30 @@
 #include <kernel/mtask.h>
 #include <kernel/gdtidt.h>
+#include <kernel/asm.h>
 
 struct TASKCTL *taskctl;
 struct TIMER *task_timer;
+int mt_tr;
+
+void mt_init(void)
+{
+	task_timer = timer_alloc();
+	timer_settime(task_timer, 2);
+	mt_tr = 3 * 8;
+	return;
+}
+
+void mt_taskswitch(void)
+{
+	if (mt_tr == 3 * 8) {
+		mt_tr = 4 * 8;
+	} else {
+		mt_tr = 3 * 8;
+	}
+	timer_settime(task_timer, 2);
+	farjmp(0, mt_tr);
+	return;
+}
 
 /* 現在CPUを利用しているタスクのTASK構造体を返す */
 struct TASK *task_now(void)
