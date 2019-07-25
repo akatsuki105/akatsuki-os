@@ -34,6 +34,9 @@ void init_idt(void)
 	load_idtr((uint32_t)&(idt));
 }
 
+/*
+ * index, base, limit, s_access, gran
+ */
 void set_segment_desc(uint32_t index, uint32_t base, uint32_t limit, uint8_t s_access, uint8_t gran)
 {
 	gdt_desc * sd = &gdt_entries[index];

@@ -137,5 +137,5 @@ as_software_interrupt:
     iretl
 
 farjmp:
-    ljmp    4(%esp), $0x00
+    ljmp 4(%esp)
     ret
