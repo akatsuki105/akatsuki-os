@@ -23,12 +23,13 @@ int input_line(char* prompt_name, char* cmdline){
 	} else if (c == '\b') {
 		cmdline[i] = '\0';
 		if (i > 0) {
+			printf("%c", c);
 			--i;
 		}
 	} else {
 		cmdline[i++] = c;
+		printf("%c", c);
 	}
-	printf("%c", c);
 	return -1;
 }
 
