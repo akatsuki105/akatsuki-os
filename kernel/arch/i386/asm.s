@@ -1,7 +1,7 @@
 .file "asm.s"
 .text
 .align  4
-.globl  inb, outb, io_hlt, io_stihlt, io_cli, io_sti, load_gdtr, load_idtr, load_ltr, as_timer_interrupt, as_keyboard_interrupt, as_software_interrupt, load_eflags, store_eflags
+.globl  inb, outb, io_hlt, io_stihlt, io_cli, io_sti, load_gdtr, load_idtr, load_tr, as_timer_interrupt, as_keyboard_interrupt, as_software_interrupt, load_eflags, store_eflags, farjmp
 .type   inb, @function
 .type   outb, @function
 .type   io_hlt, @function
@@ -10,10 +10,12 @@
 .type   io_sti, @function
 .type   load_gdtr, @function
 .type   load_idtr, @function
+.type   load_tr, @function
 .type   as_timer_interrupt, @function
 .type   as_keyboard_interrupt, @function
 .type   load_eflags, @function
 .type   store_eflags, @function
+.type   farjmp, @function
 .extern keyboard_interrupt, timer_interrupt, software_interrupt
 
 inb:
@@ -75,7 +77,7 @@ load_idtr:
 	lidt    (%eax)
 	ret
 
-load_ltr:
+load_tr:
     ltr		4(%esp)
 	ret
 
@@ -133,3 +135,7 @@ as_software_interrupt:
     popl %ebp
     popl %esp
     iretl
+
+farjmp:
+    ljmp    4(%esp), $0x00
+    ret
