@@ -15,24 +15,20 @@ size_t pmstr_len;
 static size_t i;
 
 int input_line(char* prompt_name, char* cmdline){
-  	io_cli();
-	if (fifo32_status(&shellfifo) == 0) {
-		io_sti();
-	} else {
-		char c = fifo32_get(&shellfifo);
-		io_sti();
-
-		if (c == '\n') {
-			cmdline[i] = '\0';
-			return 0;
-		} else if (c == '\b') {
-			cmdline[i] = '\0';
-		if (i > 0) { --i; }
-		} else {
-			cmdline[i++] = c;
+	char c = fifo32_get(&shellfifo);
+	io_sti();
+	if (c == '\n') {
+		cmdline[i] = '\0';
+		return 0;
+	} else if (c == '\b') {
+		cmdline[i] = '\0';
+		if (i > 0) {
+			--i;
 		}
-		printf("%c", c);
+	} else {
+		cmdline[i++] = c;
 	}
+	printf("%c", c);
 	return -1;
 }
 
@@ -46,7 +42,7 @@ int execute_cmd(char *cmdline)
 	return -1;
 }
 
-void shell(void)
+void shell(struct TASK *shell_task)
 {
 	int result = -1;
 	char cmdline[1024];
@@ -56,23 +52,22 @@ void shell(void)
 	i = 0;
 
 	for (;;) {
-		if ((result = input_line(prompt_name, cmdline)) != -1) {
-			if (i) {
-				if ((execute_cmd(cmdline)) == -1) {
-					printf("\nCommand not found!");
+		io_cli();
+		if (fifo32_status(&shellfifo) == 0) {
+			task_sleep(shell_task);
+			io_sti();
+		} else {
+			if ((result = input_line(prompt_name, cmdline)) != -1) {
+				if (i) {
+					if ((execute_cmd(cmdline)) == -1) {
+						printf("\nCommand not found!");
+					}
 				}
+				printf("\n%s> ", prompt_name);
+				result = -1;
+				i = 0;
 			}
-			printf("\n%s> ", prompt_name);
-			result = -1;
-			i = 0;
 		}
-	}
-}
-
-void task_b_main(void)
-{
-	for (;;) {
-		printf("0");
 	}
 }
 
@@ -88,6 +83,7 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 
 	// init fifo
 	init_fifo32(&kernelfifo, 128, kernelfifo_buf, 0);
+	init_fifo32(&shellfifo, 128, shellfifo_buf, 0);
 
 	// memory manage (64MB)
 	memory_manager *memman = (memory_manager *)MEMMAN_ADDR;
@@ -102,7 +98,8 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 
 	// init shell
 	struct TASK *shell_task = task_alloc();
-	shell_task->tss.esp = memman_alloc_4k(memman, 64 * 1024) + 64 * 1024;
+	shellfifo.task = shell_task;
+	shell_task->tss.esp = memman_alloc_4k(memman, 64 * 1024) + 64 * 1024 - 8;
 	shell_task->tss.eip = (int) &shell;
 	shell_task->tss.es = 2 * 8;
 	shell_task->tss.cs = 1 * 8;
@@ -110,6 +107,7 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 	shell_task->tss.ds = 2 * 8;
 	shell_task->tss.fs = 2 * 8;
 	shell_task->tss.gs = 2 * 8;
+	*((int *) (shell_task->tss.esp + 4)) = (int) shell_task;
 	task_run(shell_task, 2, 2);
 
 	printf("Hello, Akatsuki OS!\n");
