@@ -45,6 +45,11 @@ int execute_cmd(char *cmdline)
 	} else if (strcmp(cmdline, "reboot") == 0) {
 		outb(0x64, 0xFE);
 		return 0;
+	} else if (strcmp(cmdline, "free") == 0) {
+		memory_manager *memman = (memory_manager *)MEMMAN_ADDR;
+		int memory_free = memman_total(memman) / (1024 * 1024);
+		printf("\nmemory: %dMB", memory_free);
+		return 0;
 	}
 	return -1;
 }
