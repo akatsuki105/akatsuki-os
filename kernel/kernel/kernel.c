@@ -16,10 +16,10 @@ static size_t i;
 
 int input_line(char* prompt_name, char* cmdline){
   	io_cli();
-	if (fifo32_status(&kernelfifo) == 0) {
+	if (fifo32_status(&shellfifo) == 0) {
 		io_sti();
 	} else {
-		char c = fifo32_get(&kernelfifo);
+		char c = fifo32_get(&shellfifo);
 		io_sti();
 
 		if (c == '\n') {
@@ -78,9 +78,6 @@ void task_b_main(void)
 
 void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 {
-	// init variable
-	struct TASK *kernel_task;
-
 	// init hardware
 	init_terminal();
 	init_gdt();
@@ -99,12 +96,34 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 	memman_free(memman, 0x100000000, 0x20000000);
 
 	// init multitask
-	kernel_task = init_multitask(memman);
+	struct TASK *kernel_task = init_multitask(memman);
 	kernelfifo.task = kernel_task;
 	task_run(kernel_task, 1, 2);
 
+	// init shell
+	struct TASK *shell_task = task_alloc();
+	shell_task->tss.esp = memman_alloc_4k(memman, 64 * 1024) + 64 * 1024;
+	shell_task->tss.eip = (int) &shell;
+	shell_task->tss.es = 2 * 8;
+	shell_task->tss.cs = 1 * 8;
+	shell_task->tss.ss = 2 * 8;
+	shell_task->tss.ds = 2 * 8;
+	shell_task->tss.fs = 2 * 8;
+	shell_task->tss.gs = 2 * 8;
+	task_run(shell_task, 2, 2);
+
 	printf("Hello, Akatsuki OS!\n");
 
-	shell();
+	for (;;) {
+		io_cli();
+		if (fifo32_status(&kernelfifo) == 0) {
+			task_sleep(kernel_task);
+			io_sti();
+		} else {
+			int i = fifo32_get(&kernelfifo);
+			io_sti();
+			fifo32_put(&shellfifo, i);
+		}
+	}
 }
 
