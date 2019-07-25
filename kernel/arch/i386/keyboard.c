@@ -104,7 +104,7 @@ void keyboard_input_int(uint8_t scan_code)
       } else {
         // keymapでscancodeをkeyに変換する
         key = scan2key(scan_code);
-        fifo32_put(&fifo, key);
+        fifo32_put(&keyfifo, key);
       }
   } else {
     scan_code -= 0x80;

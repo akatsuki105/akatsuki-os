@@ -15,10 +15,10 @@ static size_t i;
 
 int input_line(char* prompt_name, char* cmdline){
   	io_cli();
-	if (fifo32_status(&fifo) == 0) {
+	if (fifo32_status(&keyfifo) == 0) {
 		io_sti();
 	} else {
-		char c = fifo32_get(&fifo);
+		char c = fifo32_get(&keyfifo);
 		io_sti();
 
 		if (c == '\n') {
@@ -75,11 +75,11 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 	init_gdt();
 	init_idt();
 	init_pic();
-	init_key();
 	init_pit();
 
-	// init fifo
-	init_fifo32(&fifo, 128, fifobuf);
+	// init keyboard
+	init_key();
+	init_fifo32(&keyfifo, 128, keyfifo_buf);
 
 	// memory manage (64MB)
 	memory_manager *memman = (memory_manager *)MEMMAN_ADDR;

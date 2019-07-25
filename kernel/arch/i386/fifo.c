@@ -2,8 +2,8 @@
 
 #define FLAGS_OVERRUN		0x0001
 
-struct FIFO32 fifo;
-int fifobuf[128];
+struct FIFO32 keyfifo;
+int keyfifo_buf[128];
 
 void init_fifo32(struct FIFO32 *fifo, int size, int *buf)
 {
