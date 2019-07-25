@@ -51,6 +51,9 @@ typedef struct{
 #define IDT_LEN   256
 gate_desc idt_entries[IDT_LEN];
 
+extern gdtr gdt;
+extern idtr idt;
+
 void init_idt(void);
 void set_gate_desc(uint32_t, uint32_t, uint32_t, uint8_t);
 

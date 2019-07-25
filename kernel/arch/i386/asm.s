@@ -1,7 +1,7 @@
 .file "asm.s"
 .text
 .align  4
-.globl  inb, outb, io_hlt, io_stihlt, io_cli, io_sti, load_gdtr, load_idtr, as_timer_interrupt, as_keyboard_interrupt, as_software_interrupt, load_eflags, store_eflags
+.globl  inb, outb, io_hlt, io_stihlt, io_cli, io_sti, load_gdtr, load_idtr, load_ltr, as_timer_interrupt, as_keyboard_interrupt, as_software_interrupt, load_eflags, store_eflags
 .type   inb, @function
 .type   outb, @function
 .type   io_hlt, @function
@@ -73,6 +73,10 @@ gdt_flush:
 load_idtr:
 	mov     4(%esp), %eax
 	lidt    (%eax)
+	ret
+
+load_ltr:
+    ltr		4(%esp)
 	ret
 
 as_timer_interrupt:

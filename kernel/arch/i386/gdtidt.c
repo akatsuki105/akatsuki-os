@@ -1,19 +1,19 @@
 #include <kernel/asm.h>
 #include <kernel/gdtidt.h>
 
+gdtr gdt;
+idtr idt;
+
 void init_gdt()
 {
-	gdtr gdt;
 	// clear gdt
 	for (size_t i = 0; i < GDT_LEN; i++) {
 		set_segment_desc(i, 0, 0, 0, 0);
 	}
-	// init segment
+
 	// id,  base, limit, s_access, granularity
 	set_segment_desc(1, 0, 0xffffffff, 0x9a, 0xcf);
 	set_segment_desc(2, 0, 0xffffffff, 0x92, 0xcf);
-  	set_segment_desc(3, 0, 0xffffffff, 0xfa, 0xcf);
-  	set_segment_desc(4, 0, 0xffffffff, 0xf2, 0xcf);
 
 	gdt.gdt_size = GDT_LEN * sizeof(gdt_desc) - 1;
 	gdt.base = (uint32_t)gdt_entries;
@@ -22,7 +22,6 @@ void init_gdt()
 
 void init_idt(void)
 {
-	idtr idt;
 	for (size_t i = 0; i < IDT_LEN; i++) {
 		set_gate_desc(i, 0, 0, 0);
 	}
