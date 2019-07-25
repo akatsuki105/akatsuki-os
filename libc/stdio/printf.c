@@ -4,46 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 
-static int dec2asc(char *str, int dec)
-{
-	int len = 0, len_buf; //桁数
-	int buf[10];
-	while (1)
-	{ //10で割れた回数（つまり桁数）をlenに、各桁をbufに格納
-		buf[len++] = dec % 10;
-		if (dec < 10)
-			break;
-		dec /= 10;
-	}
-	len_buf = len;
-	while (len)
-	{
-		*(str++) = buf[--len] + 0x30;
-	}
-	return len_buf;
-}
-
-//16進数からASCIIコードに変換
-static int hex2asc(char *str, int dec)
-{						  //10で割れた回数（つまり桁数）をlenに、各桁をbufに格納
-	int len = 0, len_buf; //桁数
-	int buf[10];
-	while (1)
-	{
-		buf[len++] = dec % 16;
-		if (dec < 16)
-			break;
-		dec /= 16;
-	}
-	len_buf = len;
-	while (len)
-	{
-		len--;
-		*(str++) = (buf[len] < 10) ? (buf[len] + 0x30) : (buf[len] - 9 + 0x60);
-	}
-	return len_buf;
-}
-
 static bool print(const char* data, size_t length) {
 	const unsigned char* bytes = (const unsigned char*) data;
 	for (size_t i = 0; i < length; i++)
