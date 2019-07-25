@@ -39,6 +39,12 @@ int execute_cmd(char *cmdline)
 		char *operand = cmdline + 5;
 		printf("\n%s", operand);
 		return 0;
+	} else if (strcmp(cmdline, "clear") == 0) {
+		init_terminal();
+		return 0;
+	} else if (strcmp(cmdline, "reboot") == 0) {
+		outb(0x64, 0xFE);
+		return 0;
 	}
 	return -1;
 }
