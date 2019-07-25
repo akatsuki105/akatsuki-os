@@ -19,7 +19,8 @@ void keyboard_interrupt(void){
 
 void timer_interrupt(void)
 {
-  	struct TIMER *t;
+  	struct TIMER *timer;
+	char ts = 0;
 	outb(MASTER_PIC_CMD_STAT, irq0);
 	timerctl.count++;
 	// 最初のタイマーだけチェック
@@ -27,17 +28,25 @@ void timer_interrupt(void)
 		return;
 	}
 	// 期限がすぎたタイマーを実行する
-	t = timerctl.t0;
+	timer = timerctl.t0;
 	for (;;) {
-		if (t->timeout > timerctl.count) {
+		if (timer->timeout > timerctl.count) {
 			break;
 		}
-		t->flags = TIMER_FLAGS_ALLOC;
-		fifo32_put(t->fifo, t->data);
-		t = t->next;
+		timer->flags = TIMER_FLAGS_ALLOC;
+		// タスクスイッチ
+		if (timer != task_timer) {
+			fifo32_put(timer->fifo, timer->data);
+		} else {
+			ts = 1;
+		}
+		timer = timer->next;
 	}
-	timerctl.t0 = t;
-	timerctl.next = t->timeout;
+	timerctl.t0 = timer;
+	timerctl.next = timer->timeout;
+	if (ts != 0) {
+		task_switch();
+	}
 	return;
 }
 
