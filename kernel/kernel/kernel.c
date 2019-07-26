@@ -26,6 +26,10 @@ int input_line(char* prompt_name, char* cmdline){
 			printf("%c", c);
 			--i;
 		}
+	} else if (c == '\t') {
+		cmdline[i] = '    ';
+		i += 4;
+		printf("%c", c);
 	} else {
 		cmdline[i++] = c;
 		printf("%c", c);
