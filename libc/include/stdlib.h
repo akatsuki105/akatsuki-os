@@ -9,6 +9,8 @@ extern "C" {
 
 __attribute__((__noreturn__))
 void abort(void);
+int atoi(const char *nptr);
+long strtol(const char *s, char **endp, int base);
 
 #ifdef __cplusplus
 }
