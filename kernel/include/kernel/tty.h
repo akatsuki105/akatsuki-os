@@ -4,6 +4,7 @@
 #include <stddef.h>
 
 void init_terminal(void);
+void scroll_terminal(void);
 void terminal_putchar(char c);
 void terminal_write(const char* data, size_t size);
 void terminal_writestring(const char* data);
