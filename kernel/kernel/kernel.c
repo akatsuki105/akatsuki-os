@@ -10,6 +10,7 @@
 #include <kernel/memory.h>
 #include <kernel/timer.h>
 #include <kernel/mtask.h>
+#include <kernel/fs.h>
 
 size_t pmstr_len;
 static size_t i;
@@ -53,6 +54,13 @@ int execute_cmd(char *cmdline)
 		memory_manager *memman = (memory_manager *)MEMMAN_ADDR;
 		int memory_free = memman_total(memman) / (1024 * 1024);
 		printf("\nmemory: %dMB", memory_free);
+		return 0;
+	} else if (strcmp(cmdline, "ls") == 0) {
+		ls();
+		return 0;
+	} else if (strncmp(cmdline, "touch ", 6) == 0) {
+		char *operand = cmdline + 6;
+		create_file(operand);
 		return 0;
 	}
 	return -1;
@@ -111,6 +119,9 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 	struct TASK *kernel_task = init_multitask(memman);
 	kernelfifo.task = kernel_task;
 	task_run(kernel_task, 1, 2);
+
+	// init filesytem
+	init_fs();
 
 	// init shell
 	struct TASK *shell_task = task_alloc();
