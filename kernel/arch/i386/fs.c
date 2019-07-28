@@ -15,7 +15,7 @@ void init_fs(memory_manager *memman)
     return;
 }
 
-struct FILE create_file(char *file_name)
+void create_file(char *file_name)
 {
     struct FILE *filelist = (struct FILE *)FILE_ADDR;
     int empty = 100;
@@ -24,15 +24,27 @@ struct FILE create_file(char *file_name)
             empty = i;
         }
         if (strcmp(filelist[i].f_name, file_name) == 0) {
-            printf("this name is already used.\n");
+            printf("\nthis name is already used.");
             return;
         }
     }
     if (empty == 100) {
-        printf("max file.\n");
+        printf("\nmax file.");
+        return;
     }
     strcpy(filelist[empty].f_name, file_name);
-    return filelist[empty];
+}
+
+void remove_file(char *file_name)
+{
+    struct FILE *filelist = (struct FILE *) FILE_ADDR;
+    for (int i = 0; i < NFILE; i++) {
+        if (strcmp(filelist[i].f_name, file_name) == 0) {
+            filelist[i].f_name[0] = 0;
+            return;
+        }
+    }
+    printf("\nfile does not exist.");
 }
 
 void ls(void)

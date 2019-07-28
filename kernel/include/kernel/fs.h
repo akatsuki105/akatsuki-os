@@ -13,7 +13,8 @@ struct FILE {
 };
 
 void init_fs();
-struct FILE create_file(char *file_name);
+void create_file(char *file_name);
+void remove_file(char *file_name);
 void ls(void);
 
 #endif _FS_H_
