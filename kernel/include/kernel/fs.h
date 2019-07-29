@@ -3,6 +3,7 @@
 
 #define FILE_ADDR 0x00300000
 #define NFILE 100
+#define IFDIR 040000
 
 struct FILE {
     char f_count;   /* 参照カウンタ */
@@ -16,5 +17,7 @@ void init_fs();
 void create_file(char *file_name);
 void remove_file(char *file_name);
 void ls(void);
+
+extern int cd;
 
 #endif _FS_H_
