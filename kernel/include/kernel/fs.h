@@ -16,6 +16,7 @@ struct FILE {
 void init_fs();
 void create_file(char *file_name);
 void remove_file(char *file_name);
+void create_dir(char *dir_name);
 void ls(void);
 
 extern int cd;

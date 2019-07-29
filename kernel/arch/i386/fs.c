@@ -84,6 +84,54 @@ void remove_file(char *file_name)
     printf("\nfile does not exist.");
 }
 
+void create_dir(char *dir_name)
+{
+    char *file_no;
+    int i;
+    struct FILE *filelist = (struct FILE *)FILE_ADDR;
+    int empty = 100;
+    for (i = 0; i < NFILE; i++) {
+        if (filelist[i].f_name[0] == 0 && i < empty) {
+            empty = i;
+        }
+    }
+    if (empty == 100) {
+        printf("\nmax file.");
+        return;
+    }
+
+    // カレントディレクトリのファイル番号取得
+    int j, index = 0;
+    char s[3];
+    int files[100];
+    for (i = 0; filelist[cd].f_data[i] != 0; i++) {
+        // ファイル番号の初期化かつファイル番号の格納
+        if (filelist[cd].f_data[i] == '/') {
+            files[index++] = atoi(s);
+            for (j = 0; j < 3; j++) {
+                s[j] = 0;
+            }
+            j = 0;
+        } else { // ファイル番号をセット
+            s[j++] = filelist[cd].f_data[i];
+        }
+    }
+
+    // カレントディレクトリにすでに同じファイルが存在するか確認
+    for (i = 0; i < index; i++) {
+        if (strcmp(filelist[files[i]].f_name, dir_name) == 0) {
+            printf("\nthis name is already used in this directory.");
+            return;
+        }
+    }
+
+    sprintf(file_no, "%d/", empty);
+    strcat(filelist[cd].f_data, file_no);
+    strcpy(filelist[empty].f_name, dir_name);
+    filelist[empty].f_mode = IFDIR;
+    strcpy(filelist[empty].f_data, file_no);
+}
+
 void ls(void)
 {
     int i, j, index = 0;

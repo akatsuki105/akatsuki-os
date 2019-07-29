@@ -66,6 +66,10 @@ int execute_cmd(char *cmdline)
 		char *operand = cmdline + 3;
 		remove_file(operand);
 		return 0;
+	} else if (strncmp(cmdline, "mkdir ", 6) == 0) {
+		char *operand = cmdline + 6;
+		create_dir(operand);
+		return 0;
 	}
 	return -1;
 }
