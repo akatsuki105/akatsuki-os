@@ -15,7 +15,7 @@ void init_fs(memory_manager *memman)
     filelist[0].f_mode = IFDIR;
     strcpy(filelist[0].f_name, "root");
     filelist[0].f_size = 0;
-    filelist[0].f_data = "0/";
+    filelist[0].f_data = "/";
 
     for (int i = 1; i < NFILE; i++) {
         filelist[i].f_count = 0;
