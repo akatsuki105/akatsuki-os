@@ -13,7 +13,7 @@ extern "C" {
 int printf(const char* __restrict, ...);
 int putchar(int);
 int puts(const char*);
-int sprintf(char *str, const char *format, ...);
+void sprintf(char *str, char *fmt, ...);
 int vsprintf(char *str, const char *fmt, va_list ap);
 
 #ifdef __cplusplus
