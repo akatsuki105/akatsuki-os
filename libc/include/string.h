@@ -17,6 +17,7 @@ size_t strlen(const char*);
 int strcmp(const char* s1, const char* s2);
 char *strcpy(char *s1, const char *s2);
 int strncmp(const char* s1, const char* s2, size_t len);
+char *strcat(char *s1, const char *s2);
 
 #ifdef __cplusplus
 }
