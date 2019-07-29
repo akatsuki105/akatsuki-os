@@ -6,7 +6,7 @@
 
 int cd;
 
-void init_fs(memory_manager *memman)
+void init_fs()
 {
     struct FILE *filelist = (struct FILE *)FILE_ADDR;
     cd = 0;
@@ -15,7 +15,7 @@ void init_fs(memory_manager *memman)
     filelist[0].f_mode = IFDIR;
     strcpy(filelist[0].f_name, "root");
     filelist[0].f_size = 0;
-    filelist[0].f_data = "/";
+    filelist[0].f_data = "0/";
 
     for (int i = 1; i < NFILE; i++) {
         filelist[i].f_count = 0;
