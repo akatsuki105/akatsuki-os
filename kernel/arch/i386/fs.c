@@ -61,7 +61,7 @@ void create_file(char *file_name)
 
     // カレントディレクトリにすでに同じファイルが存在するか確認
     for (i = 0; i < index; i++) {
-        if (strcmp(filelist[i].f_name, file_name) == 0) {
+        if (strcmp(filelist[files[i]].f_name, file_name) == 0) {
             printf("\nthis name is already used in this directory.");
             return;
         }
