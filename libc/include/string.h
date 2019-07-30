@@ -20,6 +20,9 @@ int strncmp(const char* s1, const char* s2, size_t len);
 char *strcat(char *s1, const char *s2);
 char *strchr(const char *s, int c);
 char* strncpy(char* dst, const char* src, size_t n);
+size_t strspn(const char *s1, const char *s2);
+char *strtok(char *s1, const char *s2);
+size_t strcspn(const char *s1, const char *s2);
 
 #ifdef __cplusplus
 }

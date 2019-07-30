@@ -50,6 +50,9 @@ string/strcpy.o \
 string/strcat.o \
 string/strchr.o \
 string/strncpy.o \
+string/strspn.o \
+string/strtok.o \
+string/strcspn.o \
 
 HOSTEDOBJS=\
 $(ARCH_HOSTEDOBJS) \
