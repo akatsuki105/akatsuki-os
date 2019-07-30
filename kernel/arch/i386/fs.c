@@ -1,162 +1,86 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <kernel/fs.h>
-#include <kernel/memory.h>
+#include <stddef.h>
+#include <string.h>
 
-int cd;
-
-void init_fs()
+void init_fs(memory_manager *memman)
 {
-    struct FILE *filelist = (struct FILE *)FILE_ADDR;
-    cd = 0;
-
-    filelist[0].f_count = 0;
-    filelist[0].f_mode = IFDIR;
-    strcpy(filelist[0].f_name, "root");
-    filelist[0].f_size = 0;
-    filelist[0].f_data = "0/";
-
-    for (int i = 1; i < NFILE; i++) {
-        filelist[i].f_count = 0;
-        filelist[i].f_mode = 0;
-        filelist[i].f_name[0] = 0;
-        filelist[i].f_size = 0;
-    }
-    return;
+    // file managerの初期化
+    struct FILEMAN *fileman = (struct FILEMAN *)FILEMAN_ADDR;
+    fileman->info_top = (struct FILEINFO *)memman_alloc_4k(memman, sizeof(struct FILEINFO));
+    
+    // rootファイルの初期化
+    struct FILEINFO *rootfile = (struct FILEINFO *)fileman->info_top;
+    rootfile->id = 0;
+    rootfile->parent = 0;
+    rootfile->child = FILE_NO_CHILD;
+    strcpy(rootfile->name, "root");
+    rootfile->type = IFDIR;
+    rootfile->next = rootfile;
 }
 
-void create_file(char *file_name)
+// IDで指定したファイル構造体を取得する
+struct FILEINFO *file_getinfo(int id)
 {
-    char *file_no;
-    int i;
-    struct FILE *filelist = (struct FILE *)FILE_ADDR;
-    int empty = 100;
-    for (i = 0; i < NFILE; i++) {
-        if (filelist[i].f_name[0] == 0 && i < empty) {
-            empty = i;
-        }
-    }
-    if (empty == 100) {
-        printf("\nmax file.");
-        return;
-    }
-
-    // カレントディレクトリのファイル番号取得
-    int j, index = 0;
-    char s[3];
-    int files[100];
-    for (i = 0; filelist[cd].f_data[i] != 0; i++) {
-        // ファイル番号の初期化かつファイル番号の格納
-        if (filelist[cd].f_data[i] == '/') {
-            files[index++] = atoi(s);
-            for (j = 0; j < 3; j++) {
-                s[j] = 0;
-            }
-            j = 0;
-        } else { // ファイル番号をセット
-            s[j++] = filelist[cd].f_data[i];
-        }
-    }
-
-    // カレントディレクトリにすでに同じファイルが存在するか確認
-    for (i = 0; i < index; i++) {
-        if (strcmp(filelist[files[i]].f_name, file_name) == 0) {
-            printf("\nthis name is already used in this directory.");
-            return;
-        }
-    }
-
-    sprintf(file_no, "%d/", empty);
-    strcat(filelist[cd].f_data, file_no);
-    strcpy(filelist[empty].f_name, file_name);
+    struct FILEMAN *fileman = (struct FILEMAN *)FILEMAN_ADDR;
+    return (struct FILEINFO *)(fileman->info_top + sizeof(struct FILEINFO) * id);
 }
 
-void remove_file(char *file_name)
+// 指定したファイルを消す
+void file_remove(struct FILEINFO *file, char recursive)
 {
-    struct FILE *filelist = (struct FILE *) FILE_ADDR;
-    for (int i = 0; i < NFILE; i++) {
-        if (strcmp(filelist[i].f_name, file_name) == 0) {
-            filelist[i].f_name[0] = 0;
-            return;
-        }
+    memory_manager *memman = (memory_manager *)MEMMAN_ADDR;
+    struct FILEINFO *child, *first;
+    // ファイルだったらデータとして利用しているメモリを開放する
+    if ((file->type & IFDIR) == 0) {
+        memman_free_4k(memman, (int)file->addr, file->size);
+    } else if (file->child != FILE_NO_CHILD && recursive) 
+    {   // ディレクトリなら再帰的に削除する
+        first = child = file_getinfo(file->child);
+        do {
+            file_remove(child, recursive);
+            child = child->next;
+        } while (first != child);
     }
-    printf("\nfile does not exist.");
+    file_unlink(file);
 }
 
-void create_dir(char *dir_name)
+// 指定したファイルのリンクを解除する（中身・確保したメモリは消さない）
+void file_unlink(struct FILEINFO *file)
 {
-    char *file_no;
-    int i;
-    struct FILE *filelist = (struct FILE *)FILE_ADDR;
-    int empty = 100;
-    for (i = 0; i < NFILE; i++) {
-        if (filelist[i].f_name[0] == 0 && i < empty) {
-            empty = i;
+    struct FILEINFO *parent, *brother;
+    brother = file->next;
+    parent = file_getinfo(file->parent);
+    
+    if (file == brother)
+    { // 同階層に自分しかいない
+        parent->child = FILE_NO_CHILD;
+    }
+    else {
+        // brotherがfileの1つ前になるまで移動
+        while (brother->next != file) {
+            brother = brother->next;
         }
+        // 1つ前のファイルの先をfileの先にする
+        brother->next = file->next;
+        parent->child = file->next;
     }
-    if (empty == 100) {
-        printf("\nmax file.");
-        return;
-    }
-
-    // カレントディレクトリのファイル番号取得
-    int j, index = 0;
-    char s[3];
-    int files[100];
-    for (i = 0; filelist[cd].f_data[i] != 0; i++) {
-        // ファイル番号の初期化かつファイル番号の格納
-        if (filelist[cd].f_data[i] == '/') {
-            files[index++] = atoi(s);
-            for (j = 0; j < 3; j++) {
-                s[j] = 0;
-            }
-            j = 0;
-        } else { // ファイル番号をセット
-            s[j++] = filelist[cd].f_data[i];
-        }
-    }
-
-    // カレントディレクトリにすでに同じファイルが存在するか確認
-    for (i = 0; i < index; i++) {
-        if (strcmp(filelist[files[i]].f_name, dir_name) == 0) {
-            printf("\nthis name is already used in this directory.");
-            return;
-        }
-    }
-
-    sprintf(file_no, "%d/", empty);
-    strcat(filelist[cd].f_data, file_no);
-    strcpy(filelist[empty].f_name, dir_name);
-    filelist[empty].f_mode = IFDIR;
-    strcpy(filelist[empty].f_data, file_no);
 }
 
-void ls(void)
+// 指定したファイルを特定の場所にリンクする
+void file_link(struct FILEINFO *file, struct FILEINFO *directory)
 {
-    int i, j, index = 0;
-    char s[3];
-    int files[100];
-    struct FILE *filelist = (struct FILE *)FILE_ADDR;
-    printf("\n");
-
-    for (i = 0; filelist[cd].f_data[i] != 0; i++) {
-        // ファイル番号の初期化かつファイル番号の格納
-        if (filelist[cd].f_data[i] == '/') {
-            files[index++] = atoi(s);
-            for (j = 0; j < 3; j++) {
-                s[j] = 0;
-            }
-            j = 0;
-        } else { // ファイル番号をセット
-            s[j++] = filelist[cd].f_data[i];
-        }
+    struct FILEINFO *brother, *sister;
+    if (directory->child == FILE_NO_CHILD) {
+        // 子供がいないなら、自分で自分を指してループを作る
+        file->next = file;
+        directory->child = file->id;
     }
-
-    // ファイル名の表示
-    for (i = 0; i < index; i++) {
-        printf("%s ", filelist[i].f_name);
+    else {
+        // 子供がいる場合は、間に挿入する
+        brother = file_getinfo(directory->child);
+        sister = brother->next;
+        file->next = sister;
+        brother->next = file;
     }
-
-    return;
 }
+

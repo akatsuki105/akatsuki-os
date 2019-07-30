@@ -10,6 +10,7 @@
 #include <kernel/memory.h>
 #include <kernel/timer.h>
 #include <kernel/mtask.h>
+#include <kernel/fs.h>
 
 size_t pmstr_len;
 static size_t i;
@@ -111,6 +112,9 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 	struct TASK *kernel_task = init_multitask(memman);
 	kernelfifo.task = kernel_task;
 	task_run(kernel_task, 1, 2);
+
+	// init filesystem
+	init_fs(memman);
 
 	// init shell
 	struct TASK *shell_task = task_alloc();
