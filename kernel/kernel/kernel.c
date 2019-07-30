@@ -55,6 +55,21 @@ int execute_cmd(char *cmdline)
 		int memory_free = memman_total(memman) / (1024 * 1024);
 		printf("\nmemory: %dMB", memory_free);
 		return 0;
+	} else if (strncmp(cmdline, "touch ", 6) == 0) {
+		char *operand = cmdline + 6;
+		file_write(operand, "", 0);
+		return 0;
+	} else if (strncmp(cmdline, "mkdir ", 6) == 0) {
+		char *operand = cmdline + 6;
+		file_write(operand, "", 1);
+		return 0;
+	} else if (strcmp(cmdline, "ls") == 0) {
+		lsdir();
+		return 0;
+	} else if (strncmp(cmdline, "cd ", 3) == 0) {
+		char *operand = cmdline + 3;
+		chdir(operand);
+		return 0;
 	}
 	return -1;
 }
@@ -114,7 +129,7 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 	task_run(kernel_task, 1, 2);
 
 	// init filesystem
-	init_fs(memman);
+	init_fs();
 
 	// init shell
 	struct TASK *shell_task = task_alloc();
