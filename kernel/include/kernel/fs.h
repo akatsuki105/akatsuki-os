@@ -30,6 +30,8 @@ void file_remove(struct FILEINFO *file, char recursive);
 void file_unlink(struct FILEINFO *file);
 void file_link(struct FILEINFO *file, struct FILEINFO *directory);
 struct FILEINFO *file_write(char *name, char *data, char is_directory);
+struct FILEINFO *file_update(char *name, char *data);
+struct FILEINFO *file_read(char *name);
 void chdir(char *name);
 void lsdir(void);
 

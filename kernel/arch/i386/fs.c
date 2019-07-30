@@ -1,6 +1,7 @@
 #include <kernel/fs.h>
 #include <stddef.h>
 #include <string.h>
+#include <stdio.h>
 
 int cd;
 
@@ -176,6 +177,66 @@ struct FILEINFO *file_write(char *name, char *data, char is_directory)
     return info;
 }
 
+// ファイルデータを更新する関数
+struct FILEINFO *file_update(char *name, char *data)
+{
+    struct MEMMAN *memman = (struct MEMMAN *)MEMMAN_ADDR;
+    struct FILEINFO *info;
+
+    // ファイルがnameであるものを探す。見つからなかったら新しく作成する
+    // 見つかればそのファイルをいったん削除し、同じidにファイルを作成する
+    info = file_search(name);
+    // ファイルが存在しない
+    if (info == -1) {
+        printf("\ntarget is not found.");
+        return -1;
+    }
+
+    // ファイルを作るとき
+    if ((info->type & IFDIR) == 0) {
+        int *to = memman_alloc_4k(memman, strlen(data));
+        int i = 0, size = strlen(data);
+        // データのコピー
+        for (i = 0; i < size; i++) {
+            to[i] = data[i];
+        }
+        info->addr = to;
+        info->size = size;
+    } else {
+        printf("\ntarget is directory.");
+        return -1;
+    }
+    return info;
+}
+
+// ファイルデータを読み取る関数
+struct FILEINFO *file_read(char *name)
+{
+    struct MEMMAN *memman = (struct MEMMAN *)MEMMAN_ADDR;
+    struct FILEINFO *info;
+
+    // ファイルがnameであるものを探す。見つからなかったら新しく作成する
+    // 見つかればそのファイルをいったん削除し、同じidにファイルを作成する
+    info = file_search(name);
+    // ファイルが存在しない
+    if (info == -1) {
+        printf("\ntarget is not found.");
+        return -1;
+    }
+
+    // ファイル内容を表示する
+    if ((info->type & IFDIR) == 0) {
+        printf("\n");
+        for (int i = 0; info->addr[i] != 0; i++) {
+            printf("%c", info->addr[i]);
+        }
+    } else {
+        printf("\ntarget is directory.");
+        return -1;
+    }
+    return info;
+}
+
 void chdir(char *name)
 {
     struct FILEINFO *target = file_search(name);
@@ -206,3 +267,5 @@ void lsdir(void)
     } while (child != firstchild);
     
 }
+
+

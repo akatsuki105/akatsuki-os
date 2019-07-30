@@ -70,6 +70,17 @@ int execute_cmd(char *cmdline)
 		char *operand = cmdline + 3;
 		chdir(operand);
 		return 0;
+	} else if (strncmp(cmdline, "read ", 5) == 0) {
+		char *operand = cmdline + 5;
+		file_read(operand);
+		return 0;
+	} else if (strncmp(cmdline, "write ", 6) == 0) {
+		// write data>file
+		char *operand = cmdline + 6;
+		char *data = strtok(operand, ">");
+		char *file_name = strtok(NULL, ">");
+		file_update(file_name, data);
+		return 0;
 	}
 	return -1;
 }
