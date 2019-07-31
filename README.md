@@ -7,6 +7,7 @@ CUIの自作OSです。
 まだ開発中です。
 
 7/28日現在
+
 ![sample](https://imgur.com/G4W30Px.gif, "サンプル")
 
 ## Features
@@ -19,6 +20,7 @@ CUIの自作OSです。
 - Keyboard Interrupt
 - Multiprocessing
 - Memory Management(not paging)
+- File System(on Memory)
 
 ## Usage
 
@@ -39,3 +41,4 @@ $ ./qemu.sh
 - [OSdev.org](https://wiki.osdev.org/)
 - [Shadow-log](https://zeus.shadow-net.jp/)
 - [30日でできるOS自作入門](https://www.amazon.co.jp/30日でできる-OS自作入門-川合-秀実/dp/4839919844)
+- [hama_duのブログ](http://hama-du.hatenablog.com/entry/20100211/1265892093)
