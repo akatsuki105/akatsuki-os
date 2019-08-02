@@ -134,6 +134,8 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 	memman_free(memman, 0x100000, 0xdfef0000);
 	memman_free(memman, 0x100000000, 0x20000000);
 
+	printf("%x\n", (mbt->mods_addr / 1024));
+
 	// init multitask
 	struct TASK *kernel_task = init_multitask(memman);
 	kernelfifo.task = kernel_task;
