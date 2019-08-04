@@ -49,3 +49,8 @@ uint32_t system_call1(uint32_t syscall_num, uint32_t arg1)
                  : "a"(syscall_num), "b"(arg1));
     return ret;
 }
+
+void api_putstr(char *str)
+{
+    system_call1(SYSCALL_WRITE, (uint32_t)str);
+}

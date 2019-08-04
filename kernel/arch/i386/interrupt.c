@@ -5,6 +5,7 @@
 #include "kernel/timer.h"
 #include "kernel/syscall.h"
 #include "kernel/mtask.h"
+#include <stdio.h>
 
 void interrupt_done(void){
   outb(MASTER_PIC_CMD_STAT, PIC_EOI);
@@ -55,7 +56,7 @@ uint32_t software_interrupt(uint32_t syscall_num, uint32_t arg1, uint32_t arg2, 
 {
 	switch (syscall_num) {
 	case SYSCALL_WRITE:
-		break;
+		printf("%s\n", (char *)arg1);
 	case SYSCALL_READ:
 		break;
 	}

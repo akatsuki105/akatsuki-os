@@ -17,4 +17,6 @@ uint32_t system_call1(uint32_t, uint32_t);
 #define SYSCALL_WRITE 0
 #define SYSCALL_READ 1
 
+void api_putstr(char *str);
+
 #endif _SYSCALL_H_
