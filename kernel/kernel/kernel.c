@@ -144,9 +144,13 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 	init_fs();
 
 	// check module
+	uint32_t file_size;
 	struct multiboot_mod_list *mod = first_mod_list(mbt);
 	while(mod != NULL) {
-		printf("mod's size: %d\n", (int)(mod->mod_end - mod->mod_start));
+		file_size = mod->mod_end - mod->mod_start;
+		printf("======== module ========\n");
+		printf(mod->mod_start);
+		printf("========================\n");
 		mod = next_mod_list(mbt, mod);
 	}
 
