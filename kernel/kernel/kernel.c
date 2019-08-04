@@ -11,6 +11,7 @@
 #include <kernel/timer.h>
 #include <kernel/mtask.h>
 #include <kernel/fs.h>
+#include <kernel/module.h>
 
 size_t pmstr_len;
 static size_t i;
@@ -141,6 +142,13 @@ void kernel_main(multiboot_info_t *mbt, uint32_t magic)
 
 	// init filesystem
 	init_fs();
+
+	// check module
+	struct multiboot_mod_list *mod = first_mod_list(mbt);
+	while(mod != NULL) {
+		printf("mod's size: %d\n", (int)(mod->mod_end - mod->mod_start));
+		mod = next_mod_list(mbt, mod);
+	}
 
 	// init shell
 	struct TASK *shell_task = task_alloc();
