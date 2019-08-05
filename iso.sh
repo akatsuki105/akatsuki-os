@@ -13,7 +13,6 @@ cp app/sample2.c isodir/modules/sample2.c
 cat > isodir/boot/grub/grub.cfg << EOF
 menuentry "akatsuki" {
 	multiboot /boot/akatsuki.kernel
-	insmod iso9660
 	module /modules/sample1.c
 	module /modules/sample2.c
 }
